@@ -23,7 +23,6 @@ HectorQuadrotorGimbalHwSim::HectorQuadrotorGimbalHwSim()
 {
   default_robot_sim_ptr_ = std::make_shared<DefaultRobotHwSim>(this);
   quadrotor_hardware_sim_ptr_ = std::make_shared<QuadrotorHardwareSim>(this);
-
 }
 
 bool HectorQuadrotorGimbalHwSim::initSim(
@@ -787,8 +786,6 @@ bool QuadrotorHardwareSim::enableMotors(bool enable)
   motor_status_.running = enable;
   return true;
 }
-
-
 
 } // ros_control_exercise
 

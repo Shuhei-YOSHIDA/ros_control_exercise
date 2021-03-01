@@ -20,7 +20,6 @@ find_package(catkin REQUIRED COMPONENTS
     gazebo_ros
     gazebo_ros_control
     pluginlib
-
     hector_quadrotor_interface
     hector_uav_msgs
 )
@@ -123,12 +122,12 @@ catkin_package(
     controller_manager
     control_toolbox
     pluginlib
+    gazebo_ros_control
     hardware_interface
     transmission_interface
     joint_limits_interface
     urdf
     angles
-
     hector_quadrotor_interface
     hector_uav_msgs
 #  DEPENDS system_lib
@@ -157,6 +156,10 @@ add_library(${PROJECT_NAME}_myrobot
 
 add_library(${PROJECT_NAME}_sim
   src/${PROJECT_NAME}/hector_quadrotor_gimbal_hw_sim.cpp
+)
+
+target_link_libraries(${PROJECT_NAME}_sim
+  ${catkin_LIBRARIES}
 )
 
 ## Add cmake target dependencies of the library

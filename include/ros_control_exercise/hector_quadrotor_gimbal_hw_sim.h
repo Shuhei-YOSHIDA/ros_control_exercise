@@ -49,7 +49,7 @@ class HectorQuadrotorGimbalHwSim : public gazebo_ros_control::RobotHWSim
 {
 public:
   HectorQuadrotorGimbalHwSim();
-  virtual ~HectorQuadrotorGimbalHwSim();
+  virtual ~HectorQuadrotorGimbalHwSim(){};
 
   virtual bool initSim(
     const std::string& robot_namespace,
@@ -74,7 +74,7 @@ class DefaultRobotHwSim// : public gazebo_ros_control::RobotHWSim
 {
 public:
   DefaultRobotHwSim(HectorQuadrotorGimbalHwSim *super_hw);
-  virtual ~DefaultRobotHwSim();
+  virtual ~DefaultRobotHwSim(){};
   HectorQuadrotorGimbalHwSim* super_hw_;
 
   virtual bool initSim(
