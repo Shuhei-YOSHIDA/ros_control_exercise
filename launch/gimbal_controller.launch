@@ -1,0 +1,13 @@
+<launch>
+  <arg name="controllers"
+  default="
+  gimbal_sample/joint_state_controller
+  gimbal_sample/roll_position_controller
+  gimbal_sample/pitch_position_controller
+  gimbal_sample/yaw_position_controller"/>
+
+  <rosparam ns="gimbal_sample" file="$(find ros_control_exercise)/params/gimbal_control.yaml"/>
+
+  <node name="gimbal_controller_spawner" pkg="controller_manager" type="spawner" respawn="false" output="screen" args="$(arg controllers) --shutdown-timeout 3"/>
+
+</launch>

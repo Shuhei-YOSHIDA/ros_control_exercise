@@ -1,0 +1,27 @@
+<launch>
+  <arg name="world" default="$(find hector_gazebo_worlds)/worlds/willow_garage.world"/>
+  <arg name="model" default="$(find ros_control_exercise)/urdf/quadrotor_gimbal_sample.gazebo.xacro"/>
+
+  <!-- Start Gazebo with world running in (max) realtime -->
+  <include file="$(find hector_gazebo_worlds)/launch/start.launch">
+    <!--<arg name="world" value="$(arg world)"/>-->
+  </include>
+
+  <!-- Spawn simulated quadrotor uav -->
+  <include file="$(find hector_quadrotor_gazebo)/launch/spawn_quadrotor.launch" >
+    <arg name="model" value="$(arg model)"/>
+    <arg name="controllers" value="
+        controller/attitude
+        controller/velocity
+        controller/position
+        "/>
+
+    <!-- A tree sets on the origin(0, 0, 0)-->
+    <arg name="x" default="5.0"/>
+    <arg name="y" default="0.0"/>
+    <arg name="z" default="0.3"/>
+  </include>
+
+  <include file="$(find ros_control_exercise)/launch/gimbal_controller.launch"/>
+
+</launch>

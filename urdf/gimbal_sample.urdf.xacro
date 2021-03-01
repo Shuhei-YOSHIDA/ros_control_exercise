@@ -1,0 +1,170 @@
+<?xml version="1.0"?>
+<!--gimbal model sample-->
+<!--Reference: dji-m100-ros/dji_m100_description-->
+<!--Reference: tu-darmstadt-ros-pkg/hector_models-->
+
+<robot xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <material name="black">
+        <color rgba="0 0 0 1"/>
+    </material>
+    <xacro:property name="M_PI" value="3.141592653589793"/>
+    <xacro:macro name="revolute_gimbal_joint"
+                 params="name axis_xyz parent child upper_limit lower_limit origin_xyz">
+        <joint name="${name}" type="revolute">
+            <parent link="${parent}" />
+            <child link="${child}" />
+            <axis xyz="${axis_xyz}" />
+            <limit effort="0.005" lower="${lower_limit}" upper="${upper_limit}" velocity="0.2" />
+            <dynamics damping="0.0" friction="0.0" />
+            <origin xyz="${origin_xyz}" rpy="0 0 0"/>
+        </joint>
+        <transmission name="trans_${name}">
+            <type>transmission_interface/SimpleTransmission</type>
+            <joint name="${name}">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+            </joint>
+            <actuator name="${name}">
+                <hardwareInterface>hardware_interface/EffortJointInterface</hardwareInterface>
+                <mechanicalReduction>1</mechanicalReduction>
+            </actuator>
+        </transmission>
+    </xacro:macro>
+
+    <xacro:macro name="gimbal_sample_model" params="name parent *origin">
+        <joint name="${name}_gimbal_base_joint" type="fixed">
+            <xacro:insert_block name="origin"/>
+            <parent link="${parent}"/>
+            <child link="${name}_gimbal_base_plate"/>
+        </joint>
+
+        <gazebo reference="${name}_gimbal_base_joint">
+            <preserveFixedJoint>true</preserveFixedJoint>
+        </gazebo>
+
+        <link name="${name}_gimbal_base_plate">
+            <visual>
+                <geometry>
+                    <box size="0.01 0.01 0.06"/>
+                </geometry>
+                <origin xyz="0.0 0 -0.03" rpy="0 ${-75 * M_PI/180.0} 0"/>
+                <material name="black"/>
+            </visual>
+            <collision>
+                <geometry>
+                    <box size="0.01 0.01 0.06"/>
+                </geometry>
+                <origin xyz="0.0 0 -0.03" rpy="0 ${-75 * M_PI/180.0} 0"/>
+            </collision>
+            <inertial>
+                <mass value="0.01"/>
+                <inertia ixx="0.0000125" ixy="0.0" ixz="0.0" iyy="0.0000125" iyz="0.0" izz="0.0000125"/>
+            </inertial>
+        </link>
+        <xacro:revolute_gimbal_joint
+        name="${name}_gimbal_roll_joint"
+        parent="${name}_gimbal_base_plate"
+        child="${name}_gimbal_roll_link"
+        lower_limit="-0.48"
+        upper_limit="0.48"
+        axis_xyz="1 0 0"
+        origin_xyz="0.05 0 -0.04"
+        />
+        <link name="${name}_gimbal_roll_link">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <mass value="0.01"/>
+                <inertia ixx="0.0000125" ixy="0.0" ixz="0.0" iyy="0.0000125" iyz="0.0" izz="0.0000125"/>
+            </inertial>
+            <visual>
+                <geometry>
+                    <box size="0.0001 0.0001 0.0001" />
+                </geometry>
+            </visual>
+        </link>
+
+        <xacro:revolute_gimbal_joint
+        name="${name}_gimbal_pitch_joint"
+        parent="${name}_gimbal_roll_link"
+        child="${name}_gimbal_pitch_link"
+        lower_limit="-0.48"
+        upper_limit="0.48"
+        axis_xyz="0 1 0"
+        origin_xyz="0 0 0"
+        />
+
+        <link name="${name}_gimbal_pitch_link">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <mass value="0.01"/>
+                <inertia ixx="0.0000125" ixy="0.0" ixz="0.0" iyy="0.0000125" iyz="0.0" izz="0.0000125"/>
+            </inertial>
+            <visual>
+                <geometry>
+                <box size="0.001 0.0001 0.0001" />
+                </geometry>
+            </visual>
+        </link>
+
+        <xacro:revolute_gimbal_joint
+        name="${name}_gimbal_yaw_joint"
+        parent="${name}_gimbal_pitch_link"
+        child="${name}_gimbal_yaw_link"
+        lower_limit="-1.57"
+        upper_limit="1.57"
+        axis_xyz="0 0 1"
+        origin_xyz="0 0 0"
+        />
+
+        <link name="${name}_gimbal_yaw_link">
+            <inertial>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+                <mass value="0.01"/>
+                <inertia ixx="0.0000125" ixy="0.0" ixz="0.0" iyy="0.0000125" iyz="0.0" izz="0.0000125"/>
+            </inertial>
+            <visual>
+                <origin xyz="0 0 0" rpy="0 0 0" />
+               <geometry>
+                    <sphere radius="0.025"/>
+                </geometry>
+            </visual>
+        </link>
+    </xacro:macro>
+
+    <xacro:macro name="gimbal_sample" params="name parent *origin">
+        <xacro:gimbal_sample_model name="${name}" parent="${parent}">
+            <xacro:insert_block name="origin"/>
+        </xacro:gimbal_sample_model>
+
+        <!-- Forward facing camera -->
+        <xacro:include filename="$(find hector_sensors_description)/urdf/generic_camera.urdf.xacro" />
+        <xacro:generic_camera
+        name="${name}_camera" parent="${name}_gimbal_yaw_link"
+        ros_topic="camera/image" cam_info_topic="camera/camera_info"
+        update_rate="10" res_x="320" res_y="240" image_format="R8G8B8" hfov="90">
+        <origin xyz="0.025 0.0 0.0" rpy="0 0 0"/>
+        </xacro:generic_camera>
+
+        <gazebo reference="${name}_gimbal_base_plate">
+            <material>Gazebo/FlatBlack</material>
+        </gazebo>
+        <gazebo reference="${name}_gimbal_roll_link">
+            <material>Gazebo/FlatBlack</material>
+        </gazebo>
+        <gazebo reference="${name}_gimbal_pitch_link">
+            <material>Gazebo/FlatBlack</material>
+        </gazebo>
+        <gazebo reference="${name}_gimbal_yaw_link">
+            <material>Gazebo/Purple</material>
+        </gazebo>
+
+        <gazebo>
+            <plugin name="gazebo_ros_control_for_gimbal" filename="libgazebo_ros_control.so">
+                <!--<robotNameSpace>/gimbal_sample</robotNameSpace>-->
+                <controlPeriod>0.01</controlPeriod>
+                <!--<robotSimType>gazebo_ros_control/DefaultRobotHWSim</robotSimType>-->
+                <!--<robotSimType>hector_quadrotor_controller_gazebo/QuadrotorHardwareSim</robotSimType>-->
+                <robotSymType>ros_control_exercise/HectorQuadrotorGimbalHwSim</robotSymType>
+            </plugin>
+        </gazebo>
+    </xacro:macro>
+</robot>

@@ -1,0 +1,18 @@
+<?xml version="1.0"?>
+
+<robot name="quadrotor" xmlns:xacro="http://www.ros.org/wiki/xacro">
+    <!-- Included URDF Files -->
+    <xacro:include filename="$(find hector_quadrotor_description)/urdf/quadrotor_base.urdf.xacro" />
+    <!-- Instantiate quadrotor_base_macro once (has no parameters atm) -->
+    <xacro:quadrotor_base_macro/>
+
+    <!--Gimbal-->
+    <xacro:include filename="$(find ros_control_exercise)/urdf/gimbal_sample.urdf.xacro"/>
+
+    <xacro:gimbal_sample name="samplegc" parent="base_link">
+      <origin xyz="0.0 0.0 -0.050" rpy="0 0 0"/>
+    </xacro:gimbal_sample>
+
+    <!--Gazebo plugins for controller, aerodynamics and so on-->
+    <xacro:include filename="$(find hector_quadrotor_gazebo)/urdf/quadrotor_plugins.gazebo.xacro" />
+</robot>
