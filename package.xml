@@ -70,6 +70,6 @@
   <!-- The export tag contains other, unspecified, tags -->
   <export>
     <!-- Other tools can request additional information be placed here -->
-
+    <gazebo_ros_control plugin="${prefix}/quadrotor_gimbal_controller_gazebo.xml"/>
   </export>
 </package>
