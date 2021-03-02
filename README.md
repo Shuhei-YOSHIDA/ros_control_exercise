@@ -1,7 +1,7 @@
 ros_control_exercise
 ====
 
-This repository is sample to use ros_control.
+This repository has samples to use ros_control.
 
 # Real robot example
 TBU
@@ -16,10 +16,16 @@ The default hw-interface can treat fundamental hw-interfaces such as `hardware_i
 However, for example, hector_quadrotor_controller_gazebo package provides the original hw-interface `hector_quadrotor_controller_gazebo/QuadrotorHardwareSim`.
 And this interfaces does not include the fundamental hw-interfaces.
 
-In this example, new hw-interface subclass is provided, which combines `gazebo_ros_control/DefaultRobotSim` and `hardware_interface/EffortJointInterface`.
+In this example, new hw-interface subclass is provided, which combines `gazebo_ros_control/DefaultRobotSim` and `hector_quadrotor_controller_gazebo/QuadrotorHardwareSim`.
+
+This part of this package is based on below packages.
+
+* [ros-simulation/gazebo_ros_pkgs](https://github.com/ros-simulation/gazebo_ros_pkgs)
+* [tu-darmstadt-ros-pkg/hector_quadrotor](https://github.com/tu-darmstadt-ros-pkg/hector_quadrotor)
 
 ```
-$ # install [tu-darmstadt-ros-pkg/hector_quadrotor](https://github.com/tu-darmstadt-ros-pkg/hector_quadrotor) packages(For ROS-noetic, binary is not released, so please clone and build them)
+$ # install packages related with ros_control, gazebo_ros_controll
+$ # install hector_quadrotor packages(For ROS-noetic, binary is not released, so please clone and build them)
 $ roslaunch ros_control_exercise gimbal_gazebo_simulation.launch
 $ # Test control of UAV and gimbal
 $ rostopic pub /gimbal_sample/pitch_position_controller/command std_msgs/Float64 "data: 1.0"  # Gimbal pitch angle control
@@ -49,5 +55,6 @@ goal:
       orientation:
         x: 0.0
         y: 0.0
+        z: 0.0
         w: 1.0"
 ```
